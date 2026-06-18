@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Трек тимлида → Руководитель отдела</title>
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: #e2e0d8;
+    --border2: #ccc9be;
+    --text: #1a1a18;
+    --text2: #5a5850;
+    --text3: #9a9890;
+    --purple: #534AB7;
+    --purple-bg: #EEEDFE;
+    --purple-text: #3C3489;
+    --teal: #0F6E56;
+    --teal-bg: #E1F5EE;
+    --teal-text: #085041;
+    --amber: #854F0B;
+    --amber-bg: #FAEEDA;
+    --amber-text: #633806;
+    --blue: #185FA5;
+    --blue-bg: #E6F1FB;
+    --blue-text: #0C447C;
+    --red: #A32D2D;
+    --red-bg: #FCEBEB;
+    --red-text: #791F1F;
+    --green: #1D9E75;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .app { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 240px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    z-index: 10;
+  }
+
+  .sidebar-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .sidebar-logo .title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .sidebar-logo .sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  .nav-section { padding: 4px 12px; margin-top: 8px; }
+  .nav-section-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--text3); padding: 0 8px; margin-bottom: 4px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: var(--radius-sm);
+    cursor: pointer; transition: background .12s;
+    font-size: 13px; color: var(--text2);
+    text-decoration: none;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--purple-bg); color: var(--purple-text); font-weight: 500; }
+  .nav-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border2); flex-shrink: 0;
+  }
+  .nav-dot.p1 { background: var(--purple); }
+  .nav-dot.p2 { background: var(--teal); }
+  .nav-dot.p3 { background: var(--amber); }
+  .nav-dot.p4 { background: var(--blue); }
+  .nav-dot.tool { background: var(--red); }
+
+  .nav-progress {
+    font-size: 10px; color: var(--text3); margin-left: auto; flex-shrink: 0;
+  }
+
+  /* Main */
+  .main { margin-left: 240px; padding: 32px 40px; max-width: 900px; }
+
+  /* Progress bar top */
+  .progress-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .ph-label { font-size: 12px; color: var(--text2); white-space: nowrap; }
+  .ph-bar { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .ph-fill { height: 100%; background: var(--green); border-radius: 3px; transition: width .4s; }
+  .ph-pct { font-size: 13px; font-weight: 600; color: var(--green); min-width: 36px; text-align: right; }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-header { margin-bottom: 24px; }
+  .section-eyebrow {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--text3); margin-bottom: 6px;
+  }
+  .section-title { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .section-sub { font-size: 13px; color: var(--text2); margin-top: 6px; }
+
+  /* Phase badge */
+  .phase-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 500; margin-bottom: 12px;
+  }
+
+  /* Checklist */
+  .checklist-group { margin-bottom: 20px; }
+  .group-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .07em; color: var(--text3); margin-bottom: 8px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  }
+
+  .task-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 12px; border-radius: var(--radius-sm);
+    cursor: pointer; transition: background .1s; margin-bottom: 2px;
+  }
+  .task-item:hover { background: var(--surface2); }
+  .task-item.done { opacity: .6; }
+
+  .task-check {
+    width: 20px; height: 20px; border-radius: 5px;
+    border: 1.5px solid var(--border2);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    transition: all .15s; margin-top: 1px;
+  }
+  .task-item.done .task-check {
+    background: var(--green); border-color: var(--green);
+  }
+  .task-item.done .task-check::after {
+    content: ""; width: 10px; height: 6px;
+    border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translate(1px, -1px);
+  }
+
+  .task-body { flex: 1; min-width: 0; }
+  .task-text { font-size: 13px; color: var(--text); line-height: 1.4; }
+  .task-item.done .task-text { text-decoration: line-through; color: var(--text3); }
+  .task-hint { font-size: 11px; color: var(--text3); margin-top: 3px; line-height: 1.4; }
+
+  .task-tag {
+    font-size: 10px; padding: 2px 7px; border-radius: 20px;
+    margin-left: 6px; vertical-align: middle; font-weight: 500;
+  }
+  .tag-urgent { background: var(--red-bg); color: var(--red-text); }
+  .tag-week { background: var(--amber-bg); color: var(--amber-text); }
+
+  /* Info cards */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .info-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+  }
+  .info-card.accent-purple { border-left: 3px solid var(--purple); }
+  .info-card.accent-teal { border-left: 3px solid var(--teal); }
+  .info-card.accent-amber { border-left: 3px solid var(--amber); }
+  .info-card.accent-blue { border-left: 3px solid var(--blue); }
+  .info-card.accent-red { border-left: 3px solid var(--red); }
+  .info-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .info-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* Q&A / Diag */
+  .diag-opts { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .diag-btn {
+    padding: 10px 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--surface);
+    font-size: 13px; color: var(--text2); cursor: pointer;
+    text-align: left; transition: all .15s;
+  }
+  .diag-btn:hover { border-color: var(--border2); color: var(--text); }
+  .diag-btn.active { border-color: var(--purple); background: var(--purple-bg); color: var(--purple-text); font-weight: 500; }
+
+  .answer-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    display: none;
+  }
+  .answer-box.show { display: block; }
+  .answer-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+  .answer-item {
+    display: flex; gap: 8px; padding: 6px 0;
+    border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2); line-height: 1.5;
+  }
+  .answer-item:last-child { border-bottom: none; }
+  .answer-item::before { content: "→"; color: var(--purple); font-weight: 600; flex-shrink: 0; }
+
+  /* Timeline */
+  .timeline { border-left: 2px solid var(--border); padding-left: 20px; margin-left: 8px; }
+  .tl-item { position: relative; padding-bottom: 20px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-dot {
+    position: absolute; left: -26px; top: 4px;
+    width: 10px; height: 10px; border-radius: 50%; background: var(--border2);
+  }
+  .tl-dot.red { background: var(--red); }
+  .tl-dot.amber { background: var(--amber); }
+  .tl-dot.teal { background: var(--teal); }
+  .tl-dot.purple { background: var(--purple); }
+  .tl-day { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); margin-bottom: 3px; }
+  .tl-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .tl-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* Score */
+  .score-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+  }
+  .score-row:last-child { border-bottom: none; }
+  .score-info { flex: 1; }
+  .score-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .score-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .score-btns { display: flex; gap: 4px; }
+  .sbtn {
+    width: 30px; height: 28px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--surface2);
+    font-size: 12px; font-weight: 500; cursor: pointer; transition: all .12s;
+    color: var(--text2);
+  }
+  .sbtn.s-yes { background: var(--teal-bg); border-color: var(--teal); color: var(--teal-text); }
+  .sbtn.s-part { background: var(--amber-bg); border-color: var(--amber); color: var(--amber-text); }
+  .sbtn.s-no { background: var(--red-bg); border-color: var(--red); color: var(--red-text); }
+
+  .score-result {
+    background: var(--surface2); border-radius: var(--radius);
+    padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+    margin-top: 12px;
+  }
+  .score-num { font-size: 24px; font-weight: 700; color: var(--text); }
+  .score-verdict { font-size: 12px; color: var(--text2); }
+  .score-meter { height: 5px; border-radius: 3px; background: var(--border); margin-top: 8px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 3px; transition: width .3s, background .3s; }
+
+  /* Outreach box */
+  .out-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; margin-bottom: 12px;
+  }
+  .out-head { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--text); }
+  .out-bad { padding: 10px 14px; }
+  .out-good { padding: 10px 14px; background: var(--teal-bg); }
+  .out-item { font-size: 12px; color: var(--text2); padding: 3px 0; line-height: 1.5; display: flex; gap: 6px; }
+
+  /* Reset btn */
+  .btn-reset {
+    font-size: 11px; color: var(--text3); background: none;
+    border: none; cursor: pointer; padding: 0; margin-top: 6px;
+  }
+  .btn-reset:hover { color: var(--text2); }
+
+  /* Week plan */
+  .week-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .week-item:last-child { border-bottom: none; }
+  .week-num { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; min-width: 68px; padding-top: 3px; }
+  .week-body { flex: 1; }
+  .week-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .week-items { font-size: 12px; color: var(--text2); line-height: 1.7; }
+
+  /* Diff grid */
+  .diff-wrap { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+  .diff-col { padding: 14px 16px; }
+  .diff-col:first-child { border-right: 1px solid var(--border); }
+  .diff-head { font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+  .diff-item { font-size: 12px; color: var(--text2); padding: 4px 0; display: flex; gap: 6px; line-height: 1.4; }
+  .diff-item::before { content: "·"; color: var(--text3); flex-shrink: 0; }
+
+  /* Badges inline */
+  .pill {
+    display: inline-block; font-size: 11px; padding: 2px 8px;
+    border-radius: 20px; margin: 2px 3px 2px 0;
+  }
+  .pill-p { background: var(--purple-bg); color: var(--purple-text); }
+  .pill-t { background: var(--teal-bg); color: var(--teal-text); }
+  .pill-a { background: var(--amber-bg); color: var(--amber-text); }
+  .pill-b { background: var(--blue-bg); color: var(--blue-text); }
+  .pill-r { background: var(--red-bg); color: var(--red-text); }
+
+  /* Mobile */
+  .menu-toggle { display: none; }
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); transition: transform .25s; }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 16px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .diff-wrap { grid-template-columns: 1fr; }
+    .diff-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+    .menu-toggle {
+      display: flex; position: fixed; top: 12px; left: 12px; z-index: 20;
+      width: 36px; height: 36px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      align-items: center; justify-content: center; cursor: pointer; flex-direction: column; gap: 4px;
+    }
+    .menu-toggle span { width: 16px; height: 1.5px; background: var(--text2); border-radius: 1px; }
+    .main { padding-top: 60px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleMenu()" aria-label="Меню">
+  <span></span><span></span><span></span>
+</button>
+
+<div class="app">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="title">Тимлид → Руководитель отдела</div>
+      
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Трек развытия</div>
+      <a class="nav-item active" onclick="show('phase1')" href="#">
+        <span class="nav-dot p1"></span> Фаза 1 · Фундамент
+        <span class="nav-progress" id="np-phase1">0%</span>
+      </a>
+      <a class="nav-item" onclick="show('phase2')" href="#">
+        <span class="nav-dot p2"></span> Фаза 2 · Практика
+        <span class="nav-progress" id="np-phase2">0%</span>
+      </a>
+      <a class="nav-item" onclick="show('phase3')" href="#">
+        <span class="nav-dot p3"></span> Фаза 3 · Сложные позиции
+        <span class="nav-progress" id="np-phase3">0%</span>
+      </a>
+      <a class="nav-item" onclick="show('phase4')" href="#">
+        <span class="nav-dot p4"></span> Фаза 4 · Руководитель
+        <span class="nav-progress" id="np-phase4">0%</span>
+      </a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Инструменты</div>
+      <a class="nav-item" onclick="show('assessment')" href="#">
+        <span class="nav-dot tool"></span> Оценка кандидатов
+      </a>
+      <a class="nav-item" onclick="show('hard-vacancy')" href="#">
+        <span class="nav-dot tool"></span> Сложная вакансия
+      </a>
+      <a class="nav-item" onclick="show('proactive')" href="#">
+        <span class="nav-dot" style="background:#1D9E75"></span> Думать наперёд
+      </a>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- Global progress -->
+    <div class="progress-header">
+      <span class="ph-label">Общий прогресс трека</span>
+      <div class="ph-bar"><div class="ph-fill" id="global-fill" style="width:0%"></div></div>
+      <span class="ph-pct" id="global-pct">0%</span>
+    </div>
+
+    <!-- ===== PHASE 1 ===== -->
+    <div class="section active" id="phase1">
+      <div class="section-header">
+        <div class="phase-badge" style="background:var(--purple-bg);color:var(--purple-text)">Фаза 1</div>
+        <div class="section-title">Фундамент рекрутинга команды</div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Теория и стандарты</div>
+
+        <div class="task-item" data-phase="phase1" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Переработать аналитику или внедрить ATS, который полноценно показывает статусы ведения вакансии в отделе</div>
+          <div class="task-hint">Аудит текущего состояния: что сейчас есть в Google-таблице, какие статусы отображаются, чего не хватает. Выбор решения: доработка имеюещёйся Google-таблицы или внедрение ATS (Greenhouse, Lever, Recruitee, или украинские аналоги)<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Все активные вакансии отдела отображаются в одному месте<br>
+            · Каждая вакансия имеет все статусы: в работе → скрининг → встреча-знакомство → Softs → Hards → ОС с предыдущего места → встреча по офферу → закрытый / на паузе<br>
+            · Время обновления статуса — не более 24 ч после каждого действия<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Любой член команды может за 30 секунд найти статус любой вакансии<br>
+            · Руководитель видит общую картину отдела без дополнительных вопросов к рекрутерам
+          </div>
+        </div></div>
+
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Первое описание вакансии и сорсинг</div>
+
+        <div class="task-item" data-phase="phase1" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Написать описание вакансии для первого вакансии</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Есть все обязательные блоки: роль, задачи, требования (must/nice), условия, про компанию<br>
+            · Must-have требований не больше 6 — реши у nice-to-have<br>
+            · Указана вилка зарплаты или чёткий формат компенсации<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Первый абзац отвечает на вопрос «что получит кандидат», а не «кто мы»<br>
+            · Текст читается как приглашение, а не как список требований<br>
+            · Нанимающий менеджер узнаёт в описании именно свою роль
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase1" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Освоить Boolean search: базовый уровень (AND / OR / NOT / "")</div>
+          <div class="task-hint">LinkedIn, Work.ua, Djinni — поиск по каждому<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Самостоятельно составлено 3 разных Boolean-запроса для одной вакансии<br>
+            · Каждый запрос даёт не менее 30 релевантных результатов<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Может объяснить почему выбрал именно эти ключевые слова<br>
+            · Умеет сужать и расширять запрос в зависимости от количества результатов
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase1" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Использует различные каналы поиска кандидатов</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Каналы поиска:</span><br>
+            · <strong>Job boards:</strong> Work.ua, Robota.ua, Djinni (для IT), HeadHunter<br>
+            · <strong>LinkedIn:</strong> активный поиск через Boolean, InMail, подписка на профили<br>
+            · <strong>Telegram:</strong> нишевые каналы и чаты по специальностях (маркетинг, дизайн, IT, HR тощо)<br>
+            · <strong>Facebook-групи:</strong> профильные сообщества специалистов, группы поиска работы<br>
+            · <strong>Instagram:</strong> публикации вакансии в сторис и постах, поиск специалистов через хештеги и геолокацию<br>
+            · <strong>Threads:</strong> нишевые дискуссии, поиск активных специалистов которые ведут публичный профиль<br>
+            · <strong>TikTok:</strong> размещение видео-вакансий, поиск молодих специалистов через контент<br>
+            · <strong>Таргетированная реклама:</strong> Facebook/Instagram Ads, LinkedIn Ads — показ вакансии точной аудитории по должности, навыкам, городу<br>
+            · <strong>Университеты и школы:</strong> прямое обращение к ВУЗам и профильным школам з предложением трудоустроить студентов или выпускников — сижировки, Junior-позиции<br>
+            · <strong>Рефералы:</strong> запрос в команду — «кто может порекомендовать?»<br>
+            · <strong>Пасивный поиск:</strong> прямой выход на людей, которые не ищут роботу<br>
+            · <strong>Мероприятия и митапы:</strong> отраслевые конференции, онлайн-мероприятия, нетворкинг<br>
+            · <strong>База отказных кандидатов:</strong> реактивация тех, кто подходил, но не сошлись условия<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Для каждой вакансии используется минимум 3 разных каналов<br>
+            · По каждому каналу есть понимание конверсии: сколько найдено → сколько ответили → сколько прошли скрининг<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Каналы подбираются под конкретную вакансию, а не используются одни и те же для всех<br>
+            · Если один канал не даёт результатов — тимлид быстро переключается на другой
+          </div>
+        </div></div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Скрининги</div>
+
+        <div class="task-item" data-phase="phase1" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Сформировать банк вопросов для скрининга под каждую вакансию</div>
+          <div class="task-hint">Вопросы должны проверять: опыт, мотивацию, условия и культурное соответствие<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Для каждой вакансии составлено минимум 8 скрининговых вопросов: 3 на мотивацию, 3 на опыт в роли, 2 на условия и культурну соответствие<br>
+            · Вопросы по hard и soft скиллам — поступают от других членов команды, тимлид их просматривает и редактирует при необходимости<br>
+            · Полный банк вопросов (скрининг + хард скиллы + софт скиллы) сохранён и доступен всей команде<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Вопросы открытые — дают кандидату возможность развёрнуто ответить, а не «да/нет»<br>
+            · Вопросы выявляют мотивацию и реальный опыт, а не проверяют резюме по памяти<br>
+            · По ответам на эти вопросы можно принять решение двигаться дальше или нет
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase1" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Самостоятельно провести 3 скрининга и оценить собственное качество проведения</div>
+          <div class="task-hint">30 мин, структура: опыт → мотивация → условия → вопросы кандидата<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Проведено минимум 3 скрининги с записью или заметками<br>
+            · После каждого — самостоятельный разбор: что сработало, что нет<br>
+            · Заметки внесены в ATS или в файл по собеседованию с кандидатом в течение 2 ч после каждого звонка<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Тимлид может чётко объяснить почему задал именно эти вопросы и что они выявляют<br>
+            · Кандидат после звонка понимает следующий шаг и сроки<br>
+            · Разговор ощущается как диалог, а не допрос
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase1" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Прослушать или просмотреть 3 скрининга подчинённых рекрутеров и дать структурированный фидбек</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">На что обращать внимание при оценке:</span><br>
+            · Придерживается ли рекрутер структуры: опыт → мотивация → условия → вопросы кандидата<br>
+            · Вопросы открытые и выявляют ли мотивацию, а не просто факты<br>
+            · Умеет ли рекрутер слушать и не перебивать, даёт ли кандидату договорить<br>
+            · Продаёт ли вакансию — или только собирает информацию<br>
+            · Понимает ли кандидат в конце следующий шаг<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Просмотрено минимум 3 скрининга подчинённых<br>
+            · По каждому — письменный фидбек с минимум 2 сильных и 2 точки роста<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Рекрутер после фидбека понимает что конкретно изменить в следующем скрининге<br>
+            · Тимлид может объяснить разницу между «хорошим» и «слабым» скринингом на конкретных примерах
+          </div>
+        </div></div>
+
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Шортлист и итоги</div>
+
+        <div class="task-item" data-phase="phase1" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Составить шортлист 3–5 кандидатов с обоснованием по каждому</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · 3–5 кандидатов с заполненным финальным файлом по кандидату и итоговым комментарием<br>
+            · По каждому указано: сильные стороны, риски, рекомендация (да/нет/возможно)<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Шортлист отражает разные профили, а не копии одного типа кандидата<br>
+            · Менеджер после просмотра шортлиста понимает кого приглашать без уточнений
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase1" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Представить шортлист нанимающему менеджеру</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Презентация занимает не более 15 минут<br>
+            · Менеджер дал ответ по каждому кандидату: да / нет / вопросы<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Тимлид может аргументировать выбор каждого кандидата в шортлисте<br>
+            · Менеджер не задаёт уточняющих вопросов, ответ на которые уже есть в финальном файле по кандидату
+          </div>
+        </div></div>
+
+      </div>
+    </div>
+
+    <!-- ===== PHASE 2 ===== -->
+    <div class="section" id="phase2">
+      <div class="section-header">
+        <div class="phase-badge" style="background:var(--teal-bg);color:var(--teal-text)">Фаза 2</div>
+        <div class="section-title">Самостоятельная практика · Линейные вакансии</div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Структурные собеседования</div>
+
+        <div class="task-item" data-phase="phase2" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Провести 3+ структурных собеседования по STAR-методу</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что такое STAR-метод:</span><br>
+            Структурированный способ получить от кандидата конкретный ответ на основе реального опыта, а не теоретических рассуждений. Вместо «расскажи о себе» — «расскажи как ты решал конкретную ситуацию».<br><br>
+            · <strong>S — Situation (Ситуация):</strong> кандидат описывает контекст и обстоятельства. «В какой компании, в какой команде, что происходило?» — устанавливает контекст для понимания сложности задачи<br>
+            · <strong>T — Task (Задача):</strong> какая конкретная задача или вызов стоял перед кандидатом. «Что именно от тебя требовалось? Какова была твоя зона ответственности?»<br>
+            · <strong>A — Action (Действие):</strong> что кандидат сделал лично. Ключевое слово «я», а не «мы». «Какие конкретные шаги ты сделал? Почему выбрал именно такой подход?»<br>
+            · <strong>R — Result (Результат):</strong> что вышло в итоге. В идеале — в цифрах или конкретных фактах. «Какой результат ты получил? Что изменилось после твоих действий?»<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Пример вопроса по STAR:</span><br>
+            «Расскажи о ситуации, когда тебе нужно было закрыть сложную вакансию в сжатые сроки. Что это была за роль, какая задача перед тобой стояла, что ты конкретно сделал и какой результат ты получил?»<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Красные флаги в ответе:</span><br>
+            · Кандидат говорит «мы сделали» — неясно какова его личная роль<br>
+            · Нет конкретного результата — «всё вышло хорошо» без цифр или фактов<br>
+            · Ответ теоретический — «я бы сделал так» вместо «я сделал вот так»<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Минимум 3 проведённых собеседования продолжительностью 45–60 мин<br>
+            · В каждом собеседовании задано минимум 2 STAR-вопроса с полученным развёрнутым ответом<br>
+            · Проверены все ключевые компетенции из описания вакансии<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Кандидат приводит конкретные примеры, а не общие слова — тимлид это фиксируетт<br>
+            · Есть чёткое ощущение после каждого собеседования: рекомендовать или нет, и почему
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase2" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Составлять отчёт после каждого собеседования и отправлять менеджеру</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Отчёт отправлен в течение 3 ч после собеседования<br>
+            · Отчёт содержит: оценку по каждой компетенции, сильные/слабые стороны, рекомендацию<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Менеджер после чтения отчёта не задаёт уточняющих вопросов<br>
+            · Отчёт написан языком бизнеса, а не рекрутинговым жаргоном
+          </div>
+        </div></div>
+
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Закрытие и онбординг</div>
+
+        <div class="task-item" data-phase="phase2" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Привести команду рекрутеров к закрытию 2–3 линейных вакансии полным циклом</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · 2–3 вакансии закрыты командой от брифинга до выхода кандидата<br>
+            · Середний time-to-fill по команде не превышает 30 календарных дней<br>
+            · Offer acceptance rate по команде ≥ 80%<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Тимлид понимает где в процессе каждого рекрутера есть слабые места и активно их устраняет<br>
+            · Нанимающий менеджер доволен качеством кандидатов, которых приводит команда
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase2" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Обеспечить, чтобы каждый рекрутер поддерживал контакт с кандидатом до первого рабочего дня</div>
+          <div class="task-hint">Минимум 2 контакта после подписания оффера<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · 100% принятых офферов имеют минимум 2 точки контакта до первого дня<br>
+            · No-show в первый день в команде = 0<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Тимлид проверяет, что рекрутеры не «исчезают» после подписания оффера<br>
+            · Стандарт пре-онбординга зафиксирован и выполняется всей командой одинаково
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase2" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Внедрить отслеживание метрик команды: time-to-fill, offer acceptance rate</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Time-to-fill и offer acceptance rate считаются по каждому рекрутеру отдельно и по команде в целом<br>
+            · Конверсия на каждом этапе воронки отображается в трекере<br>
+            · Метрики просматриваются минимум раз в неделю на weekly review<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Тимлид видит на каком этапе у каждого рекрутера наибольший отсев и знает причину<br>
+            · Метрики используются для принятия решений, а не просто фиксируются
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ===== PHASE 3 ===== -->
+    <div class="section" id="phase3">
+      <div class="section-header">
+        <div class="phase-badge" style="background:var(--amber-bg);color:var(--amber-text)">Фаза 3</div>
+        <div class="section-title">Сложные позиции · C-level и нестандартные роли</div>
+        <div class="section-sub">Топ-менеджмент, пассивные кандидаты, закрытый поиск</div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Вход в C-level поиск</div>
+
+        <div class="task-item" data-phase="phase3" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Составить профиль идеального C-level кандидата</div>
+          <div class="task-hint">Стратегическое мышление, опыт масштабирования, стиль лидерства<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Профиль содержит минимум 5 must-have критериев с примерами что это означает на практике<br>
+            · Определено 3 стоп-фактора специфичных именно для этого C-level уровня<br>
+            · Согласовано с основателем или CEO до старта поиска<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Профиль отражает не только «что умеет», а и «как думает и как ведёт людей»<br>
+            · Есть понимание чем этот C-level отличается от senior-специалиста в той же сфере
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase3" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Написать персонализированный outreach каждому</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что такое outreach:</span><br>
+            Это первое сообщение человеку, который <strong>не ищет работу</strong> и не откликался ни на одно объявление. Тимлид или рекрутер сам выходит на контакт — через LinkedIn, email, Telegram или другой канал. Цель — заинтересовать человека и получить ответ, а не сразу продать вакансию. Качество outreach напрямую определяет сколько нужных кандидатов согласятся на разговор.<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что НЕ работает:</span><br>
+            · Шаблонное «Мы ведущая компания, ищем талантливого специалиста»<br>
+            · Сообщение длиннее 5 предложений без вопроса в конце<br>
+            · «Вы рассматриваете новые возможности?» — без контекста и персонализации<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что работает:</span><br>
+            · Конкретная причина почему написали именно этому человеку: «Видел твой проект / публикацию / выступление про X»<br>
+            · Один вопрос в конце, требующий короткого ответа<br>
+            · Показать что конкретно получит человек — не «интересный проект», а конкретика<br>
+            · Коротко: 3–4 предложения максимум в первом сообщении<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Ответ rate на outreach ≥ 30% (норма для C-level пасивного поиска)<br>
+            · Каждое сообщение содержит персональную деталь о кандидате, не шаблон<br>
+            · Сообщение не длиннее 5 предложений<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Кандидат после сообщения понимает почему написали именно ему<br>
+            · Тон — ровный, партнёрский, без лести и без продажи «в лоб»
+          </div>
+        </div></div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Процесс собеседования</div>
+
+        <div class="task-item" data-phase="phase3" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Провести C-level собеседования (минимум 2 кандидата) по гайду</div>
+          <div class="task-hint">Вопросы на стратегию, лидерство, результаты, мотивацию<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Минимум 2 полноценных C-level собеседования проведено за структурированным гайдом<br>
+            · Каждое собеседование покрыло все 4 блока: стратегия, лидерство, результаты, мотивация<br>
+            · Письменный отчёт по каждому кандидату предоставлении в течение 24 ч<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Кандидат приводил конкретные цифры и кейсы, а не общие фразы — тимлид это отслеживал<br>
+            · После собеседования есть чёткая позиция: рекомендовать основателю или нет
+          </div>
+        </div></div>
+
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Сложные ситуации</div>
+
+        <div class="task-item" data-phase="phase3" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Понимать специфику C-level и Senior вакансии и передавать эти знания рекрутерам</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что тимлид должен понимать о сложных позициях:</span><br>
+            · C-level и Senior — это пассивные кандидаты, они не ищут работу самостоятельно<br>
+            · Цикл закрытия длиннее: 60–90 дней vs 20–30 для линейных<br>
+            · Кандидат оценивает компанию так же, как компания оценивает его — это переговоры равных<br>
+            · Ошибка найма на этом уровне стоит очень дорого — качество важнее скорости<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Тимлид провёл минимум 1 брифинг-сессию с рекрутерами о специфике C-level поиска<br>
+            · Есть письменный гайд или чеклист для рекрутера по ведению сложной вакансии<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Рекрутеры понимают разницу между линейным и C-level процессом и не ведут их одинаково<br>
+            · Тимлид может объяснить на конкретном примере где рекрутер допустил ошибку в сложной вакансии
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase3" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Научить рекрутеров распознавать и отрабатывать контроффер</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что такое контроффер и почему это критично:</span><br>
+            Контроффер — это предложение от текущего работодателя кандидата после того как он объявил о намерении уйти. Чаще всего это повышение зарплаты или должности. Без подготовки рекрутер теряется и упускает кандидата, которого вёл неделями.<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что тимлид должен передать рекрутерам:</span><br>
+            · Выявить риск контроффера ещё на скрининга: «Как отреагирует твой работодатель если ты скажешь что уходишь?»<br>
+            · Не паниковать при получении контроффера — позвонить и слушать, а не продавать<br>
+            · Выявить настоящую причину колебаний: чаще всего это не деньги, а страх перемен или нерешённые вопросы<br>
+            · Всегда иметь кандидата №2 в резерве — ни одна вакансия не должна зависеть от одного человека<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Проведено минимум 1 ролевую игру или разбор реального кейса с контроффером с командой<br>
+            · По каждой активной и сложной вакансии есть кандидат №2 у воронки<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Рекрутеры не узнают о контроффере от тимлида — сами сигнализируют и предлагают план действий<br>
+            · Процент потерянных офферов через контроффер уменьшается
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase3" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Контролировать и доводить до закрытия сложные вакансии, которые ведут подчинённые рекрутеры</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Как тимлид контролирует сложную вакансию:</span><br>
+            · Weekly check-in по каждой сложной вакансии: сколько в работе, где застряло, что дальше<br>
+            · Просматривает outreach-сообщения рекрутера до отправки если вакансия новая или рекрутер ещё не имел C-level опыта<br>
+            · Вести список «тёплых» кандидатов в резерв параллельно с основной воронкой<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Команда закрыла минимум 1 C-level или Senior вакансию под контролем тимлида<br>
+            · Time-to-fill для C-level — в рамках 60–90 дней<br>
+            · По каждой сложной вакансии есть минимум 2 кандидата в воронке одновременно<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · CEO / основатель доволен качеством кандидата и прозрачностью процесса<br>
+            · Рекрутер после закрытия сложной вакансии может самостоятельно повторить этот процесс без участия тимлида
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase3" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Довести рекрутеров до самостоятельного ведения C-level позиции: оценка кандидата, плюсы и риски, личная ответственность за отправленного кандидата</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что означает «самостоятельно вести C-level»:</span><br>
+            Рекрутер не просто находит профили и передаёт тимлиду — он ведёт всю воронку, формирует собственное мнение по каждому кандидату и берёт ответственность за рекомендацию. Тимлид выступает как контролёр качества, а не исполнитель.<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что рекрутер должен уметь делать самостоятельно:</span><br>
+            · Провести полную воронку: outreach → скрининг → структурированное собеседование → финальная оценка<br>
+            · Составить итоговый профиль кандидата с конкретными плюсами: опыт масштабирования, результаты в цифрах, стиль лидерства<br>
+            · Прописать риски: где есть пробелы, что может не срабатывать, которые вопросы остались открытьмы<br>
+            · Дать чёткую рекомендацию: рекомендую / не рекомендую / рекомендую с предостережениями — и аргументировать<br>
+            · Подписаться под своей рекомендацией: «я веду этого кандидата и отвечаю за эту оценку»<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Каждый рекрутер команды подготовил минимум 1 полный финальный файл по C-level кандидату самостоятельно<br>
+            · Файл содержит: плюси (минимум 3), риски (минимум 2), рекомендация с аргументацией<br>
+            · Тимлид проверил и дав письменный фидбек по каждому файлу<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Рекрутер не уклоняется от ответственности формулировкой «решайте сами» — он даёт чёткую позицию<br>
+            · Оценка кандидата основывается на фактах и конкретных примерах из разговора, а не на «ощущении»<br>
+            · CEO или основатель после прочтения файла понимает кандидата без дополнительных пояснений от рекрутера
+          </div>
+        </div></div>
+
+      </div>
+    </div>
+
+    <!-- ===== PHASE 4 ===== -->
+    <div class="section" id="phase4">
+      <div class="section-header">
+        <div class="phase-badge" style="background:var(--blue-bg);color:var(--blue-text)">Фаза 4</div>
+        <div class="section-title">Переход в роль руководителя отдела</div>
+        <div class="section-sub">Управление командой, процесссы, стратегия</div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Менторинг и контроль</div>
+
+        <div class="task-item" data-phase="phase4" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Провести shadow-session с каждым рекрутером команды</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что такое shadow-session:</span><br>
+            Shadow-session («теневая сессия») — это формат наблюдения где тимлид молча слушает или смотрит как рекрутер проводит реальный звонок или собеседованийу с кандидатом. Рекрутер работает как обычно, тимлид не вмешивается и не комментирует во время сессии — только наблюдает и фиксирует заметки. После окончания звонка проводится дебриф: что получилось, что можно улучшить.<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Зачем это нужно тимлиду:</span><br>
+            · Увидеть реальный уровень рекрутера, а не почувствовать «всё хорошо» на weekly<br>
+            · Выявыть конкретные точки роста: тон, структура вопросов, умение слушать, pitch вакансии<br>
+            · Дать фидбек на основе фактов, а не догадок<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Shadow-session проведено з каждым рекрутером минимум 1 раз<br>
+            · По каждой сессии составлен письменный фидбек: минимум 2 сильных и 2 точки роста<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Рекрутер после дебрифу знает что конкретно изменить в следующем звонку<br>
+            · Тимлид наблюдает и фиксирует — не перебирает разговор на себя
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="phase4" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Дать структурированный фидбек каждому рекрутеру (конкретно, без демотивации)</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Фидбек дан каждому рекрутеру минимум 1 раз на 2 недели<br>
+            · Каждый фидбек содержит: что хорошо → что улучшить → конкретное дейсттвие на следующую неделю<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Рекрутер после фидбека мотивований, а не демотивований<br>
+            · Динамика рекрутера улучшается от фидбека к фидбеку
+          </div>
+        </div></div>
+
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Стратегия и отчётность</div>
+
+        <div class="task-item" data-phase="phase4" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Выстроить прозрачную систему отчётности для CEO / COO по отделу рекрутинга</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что означает прозрачная отчётность:</span><br>
+            CEO или COO в любой момент может открыть отчёт и увидеть полную картину: сколько вакансий открыто, на каком этапе каждая, которые есть риски, что планируется. Без необходимости спрашивать тимлида «как дела?»<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что входит в отчётность:</span><br>
+            · <strong>Статус по каждой вакансии:</strong> в работе, на паузе, скрининг, встреча-знакомство, Soft Skills, Hard Skills, ОС с предыдущего места, встреча по офферу, закрытый<br>
+            · <strong>Ключевые метрики отдела:</strong> time-to-fill, offer acceptance rate, количество закрытых вакансии за период, конверсия по этапам воронки<br>
+            · <strong>Риски и блокеры:</strong> которые вакансии застряли и почему, что нужно от CEO/COO для разблокировки<br>
+            · <strong>Следующие шаги:</strong> что команда делает сейчас и что планируется на следующую неделю/месяц<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Формат отчётности:</span><br>
+            · Регулярный отчёт: еженедельно или раз в 2 недели — согласовывается с CEO/COO<br>
+            · Живой дашборд или таблица которая обновляется в реальном времени — CEO видит картину без ожидания отчёта<br>
+            · Короткий письменный summary если есть критические изменения или срочные вопросы<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Отчётность для нанимающего менеджера:</span><br>
+            Кроме CEO/COO, каждый нанимающий менеджер должен получать свою отчётность — по конкретных вакансиях которые он открыл. Менеджер не должен спрашивать тимлида «ну как там вакансия X?» — он видит статус сам.<br><br>
+            · <strong>Что и когда получает менеджер:</strong> статус по каждому кандидату после каждого этапа — скрининг, встреча-знакомство, Soft Skills, Hard Skills, ОС с предыдущего места<br>
+            · <strong>Формат:</strong> коротке письменное сообщение или обновление в общем трекере после каждого движения кандидата по воронке<br>
+            · <strong>Петля обратной связи:</strong> менеджер даёт фидбек по кандидату в рамках 48 ч — тимлид следит за тем, чтобы эта договорённость соблюдалась<br>
+            · <strong>Если вакансия застряла:</strong> тимлид сам инициирует синк с менеджером и приносит данные, а не ждёт пока менеджер спросит<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Отчётность настроена и первый отчёт представлен CEO/COO<br>
+            · Отчёт содержит минимум 4 метрики и статус по каждой активной вакансии<br>
+            · Дани у отчёте обновляются не реже чем раз в неделю<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · CEO/COO понимает ситуацию в отделе без дополнительных вопросов к тимлиду<br>
+            · Отчёт содержит не только факты, а и выводы и следующие шаги — это управленческая позиция, а не просто статистика<br>
+            · Количество ситуативных вопросов от CEO/COO «как там ваканнсия X?» уменьшается — ответ есть в отчёте
+          </div>
+        </div></div>
+
+      </div>
+    </div>
+
+    <!-- ===== INTERVIEW GUIDE ===== -->
+    <!-- ===== ASSESSMENT ===== -->
+    <div class="section" id="assessment">
+      <div class="section-header">
+        <div class="section-title">Как оценивать кандидатов</div>
+        <div class="section-sub">Отличия между линейнымы и C-level позициямы</div>
+      </div>
+      <div class="diff-wrap">
+        <div class="diff-col">
+          <div class="diff-head" style="color:var(--teal-text)">Линейные позиции</div>
+          <div class="diff-item">Оцениваем соответствие описанию вакансии здесь и сейчас</div>
+          <div class="diff-item">Проверяем конкретные навыки и инструменты</div>
+          <div class="diff-item">Важно: может ли выполнить задачу с первой недели</div>
+          <div class="diff-item">Вопросы STAR: ситуация → действие → результат</div>
+          <div class="diff-item">Референсы опциональные, но желательны</div>
+          <div class="diff-item">Решение за 1–2 этапа собеседований</div>
+          <div class="diff-item">Стоп-фактор: отсутствие ключевого hard skill</div>
+        </div>
+        <div class="diff-col">
+          <div class="diff-head" style="color:var(--purple-text)">C-level позиции</div>
+          <div class="diff-item">Оцениваем потенциал и стратегию на 2–3 года</div>
+          <div class="diff-item">Проверяем решения в условиях неопределённости</div>
+          <div class="diff-item">Важно: как будет выстраивать систему, а не выполнять задачи</div>
+          <div class="diff-item">Вопросы о кризисах, провалах, неочевидных решениях</div>
+          <div class="diff-item">Референсы обязательны, 2–3 независимых</div>
+          <div class="diff-item">3–5 этапов собеседований, включая Board / основателей</div>
+          <div class="diff-item">Стоп-фактор: слабое лидерство или негибкость</div>
+        </div>
+      </div>
+      <div style="margin-bottom:8px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)">Типичные ошибки при оценке</div>
+      <div class="info-grid">
+        <div class="info-card accent-red"><div class="info-title">Halo effect</div><div class="info-text">Один яркий факт (крупный бренд, высокая должность) закрывает глаза на слабые стороны. Всегда проверяй все критерии скоринга.</div></div>
+        <div class="info-card accent-red"><div class="info-title">Сходство с собой</div><div class="info-text">Кандидат нравится потому, что похож на тебя или менеджера. Это не критерий. Ориентируйся на описание вакансии и бизнес-потребность.</div></div>
+        <div class="info-card accent-amber"><div class="info-title">Overqualified = отказ</div><div class="info-text">Всегда выясняй почему. Иногда человек сознательно хочет меньше ответственности — и это окей.</div></div>
+        <div class="info-card accent-amber"><div class="info-title">Игнорировать soft skills</div><div class="info-text">Критично для C-level. Идеальное CV + токсичный стиль управления — риск для всей команды.</div></div>
+      </div>
+
+    </div>
+
+    <!-- ===== HARD VACANCY ===== -->
+    <div class="section" id="hard-vacancy">
+      <div class="section-header">
+        <div class="section-title">Сложная вакансия · Срочные действия</div>
+        <div class="section-sub">Диагностика + действия по дням + антикризисный чеклист</div>
+      </div>
+
+      <div style="margin-bottom:8px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)">Где застряла воронка?</div>
+      <div class="diag-opts">
+        <button class="diag-btn" onclick="diag(0,this)">Мало или ноль откликов / кандидатов в верхней части воронки</button>
+        <button class="diag-btn" onclick="diag(1,this)">Кандидаты есть, но после скрининга уходят или не проходят дальше</button>
+        <button class="diag-btn" onclick="diag(2,this)">Менеджер отклоняет всех — «не тот», «не так», «подумаем»</button>
+        <button class="diag-btn" onclick="diag(3,this)">Кандидат согласился, а потом отказал или пропал после оффера</button>
+        <button class="diag-btn" onclick="diag(4,this)">Вакансия открыта 2+ месяца, ситуация не меняется</button>
+      </div>
+      <div class="answer-box" id="diag-ans">
+        <div class="answer-title" id="diag-title"></div>
+        <div id="diag-items"></div>
+      </div>
+
+      <div style="margin:20px 0 8px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)">Действия по дням</div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot red"></div><div class="tl-day">День 1 — Срочно</div><div class="tl-title">Стоп и аудит воронки</div><div class="tl-text">Где падает конверсия? Сколько аутрич-сообщений отправлено? Когда последний раз говорили с менеджером про критерии? Фиксируй цифры — без них действовать вслепую.</div></div>
+        <div class="tl-item"><div class="tl-dot red"></div><div class="tl-day">День 1–2 — Срочно</div><div class="tl-title">Переписать описание вакансии с нуля</div><div class="tl-text">Убрать требования, которым соответствует меньше 20% рынка. Добавить вилку зарплаты — 60% кандидатов игнорируют вакансии без неё. Сократить must-have до 5 пунктов.</div></div>
+        <div class="tl-item"><div class="tl-dot amber"></div><div class="tl-day">День 2–3 — На этой неделе</div><div class="tl-title">Изменить каналы и подход к outreach</div><div class="tl-text">Если LinkedIn не даёт результатов — нишевые Telegram, Discord, профильные форумы. Переписать сообщения: короче, персонализированнее, с вопросом. Запустить реферальный запрос.</div></div>
+        <div class="tl-item"><div class="tl-dot amber"></div><div class="tl-day">День 3 — На этой неделе</div><div class="tl-title">Жёсткий разговор с менеджером</div><div class="tl-text">Принести данные: сколько кандидатов, где отсев, что говорят отказы. Показать карту рынка. Предложить 3 сценария: снизить требования / повысить зарплату / увеличить время поиска.</div></div>
+        <div class="tl-item"><div class="tl-dot teal"></div><div class="tl-day">День 4–7</div><div class="tl-title">Пассивный поиск</div><div class="tl-text">Построить список 20–30 целевых профилей. Написать персонализированно каждому. Подключить нетворк: попросить знакомых в сфере порекомендовать.</div></div>
+        <div class="tl-item"><div class="tl-dot teal"></div><div class="tl-day">Неделя 2</div><div class="tl-title">Пересмотреть критерии отбора</div><div class="tl-text">Рассмотреть кандидатов из смежных отраслей или компаний меньшего размера. Проверить базу отказных за 12 месяцев — кто-то мог вырасти. Гибридная модель: часть функций на фрилансера.</div></div>
+        <div class="tl-item"><div class="tl-dot purple"></div><div class="tl-day">Неделя 3+</div><div class="tl-title">Эскалация и привлечение ресурсов</div><div class="tl-text">Если вакансия критична и прогресса нет — обсудить агентство или хедхантера. Подготовить отчёт для руководства: почему закрыть невозможно без изменения условий. Зафиксировать бизнес-влияние.</div></div>
+      </div>
+
+      <div style="margin:20px 0 8px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3)">Антикризисный чеклист</div>
+      <div id="hv-checklist">
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Просмотреть описание вакансии: убрать требования, которым соответствует меньше 20% рынка</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Добавить или уточнить вилку зарплаты в объявлении</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Переписать первый абзац описания вакансии: фокус на кандидата, не на компанию</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Сократить must-have до 5 пунктов, остальное — nice-to-have</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Аудит каналов: где было размещение, какая конверсия с каждого</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Переписать outreach-сообщения: короче, персонализированнее, с вопросом</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Запустить реферальный запрос внутри команды</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Построить список 20–30 пассивных кандидатов и написать каждому вручную</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Просмотреть базу отказных кандидатов за 12 месяцев</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Провести синк с менеджером — показать данные воронки, не слова</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Предложить 3 сценария: снизить требования / повысить компенсацию / увеличить время</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Зафиксировать новые критерии письменно</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Сократить количество этапов собеседований если их больше 3</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Установить SLA на фидбек от менеджера — не больше 48 часов</div><div class="task-hint"><span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что такое SLA:</span><br>SLA (Service Level Agreement) — это принятый стандарт скорости реакции. В рекрутинге SLA означает, что все участники процесса знают и соблюдают конкретные временные рамки. Если SLA не соблюдается — менеджер может молчать неделю после собеседования, кандидат ждёт в неопределённости и уходит к конкурентам.<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Что означает SLA 48 часов на фидбек:</span><br>
+            · После каждого собеседования или просмотра резюме нанимающий менеджер обязан дать ответ тимлиду в течение 48 рабочих часов<br>
+            · Ответ может быть: «двигаемся дальше», «не подходит», «хочу ещё подумать — дам ответ до [дата]»<br>
+            · Если менеджер молчит больше 48 ч — тимлид напоминает. Если после напоминания ещё молчание — эскалирует до руководителя менеджера<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Почему это важно:</span><br>
+            · Сильные кандидаты в активном поиске получают оффер за 5–7 дней. Если ваш процесс занимает 3 недели из-за молчания менеджера — вы просто теряете лучших<br>
+            · SLA защищает тимлида: не он «не может закрыть» — он фиксирует где именно застрял процесс
+          </div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Всегда иметь 2–3 кандидата параллельно, не вести по одному</div></div></div>
+        <div class="task-item" data-phase="hv" onclick="toggle(this)"><div class="task-check"></div><div class="task-body"><div class="task-text">Подготовить отчёт для руководства если вакансия открыта 60+ дней</div></div></div>
+      </div>
+    </div>
+
+    <!-- ===== 1:1 PLAN ===== -->
+    <!-- ===== PROACTIVE RECRUITING ===== -->
+    <div class="section" id="proactive">
+      <div class="section-header">
+        <div class="phase-badge" style="background:var(--teal-bg);color:var(--teal-text)">Навык руководителя</div>
+        <div class="section-title">Думать наперёд · Проактивный рекрутинг</div>
+        <div class="section-sub">Начинать работу с кандидатами до того, как вакансия официально открыта</div>
+      </div>
+
+      <div class="info-card accent-teal" style="margin-bottom:20px">
+        <div class="info-title">Главная идея</div>
+        <div class="info-text">Реактивный тимлид ждёт, пока вакансия откроется, и лишь тогда начинает искать. Проактивный руководитель знает, что через 4–6 недель появится новая роль — и уже сейчас даёт рекрутеру задачу находить и прогревать потенциальных кандидатов. Когда вакансия официально стартует, готовый шортлист уже существует.</div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Понимание бизнес-ритма</div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Ознакомиться с квартальным и годовым планом найма компании</div>
+          <div class="task-hint">Какие роли планируются, в каких месяцах, кто нанимающий менеджер<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Получен и изучен актуальный hiring plan на текущий квартал<br>
+            · Все запланированные вакансии внесены в личный трекер тимлида с датами<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Тимлид может без подсматривания назвать топ-3 приоритетные вакансии следующего месяца<br>
+            · Есть понимание связи между бизнес-целями компании и потребностью в конкретных людях
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Выписать все «предсказуемые» вакансии на 2–3 месяца вперёд</div>
+          <div class="task-hint">Расширение команды, замена человека который собирается уйти, новые продукты<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Список содержит минимум 3 прогнозируемые вакансии с ориентировочными датами<br>
+            · По каждой есть предварительный профиль: уровень, направление, ключевые требования<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Список обновляется ежемесячно — не делается один раз и забывается<br>
+            · Есть понимание откуда берётся информация: синки с CEO, сигналы от менеджеров
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Регулярно проводить синк с CEO / COO: какие изменения в структуре планируются?</div>
+          <div class="task-hint">Раз в 2 недели — «что нового на горизонте, что нам нужно готовить?»<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Синк проводится минимум 1 раз в 2 недели<br>
+            · После каждого синка есть письменный итог: новые вакансии, изменения приоритетов<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · CEO/COO чувствует что рекрутинг понимает бизнес, а не просто закрывает заявки<br>
+            · Тимлид приносит на синк собственные наблюдения, а не только слушает
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Отслеживать сигналы внутри команды: кто перегружен, кто может уйти</div>
+          <div class="task-hint">Разговоры с менеджерами, отзывы, снижение вовлечённости — это ранние маркеры<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Тимлид проводит минимум 1 неформальный разговор в неделю с менеджерами команды<br>
+            · Есть фиксированный список «зон риска» — роли где высока вероятность увольнения<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Увольнение не становится неожиданностью — тимлид его предвидел и уже готовил пул<br>
+            · Отношения с менеджерами позволяют получать честную информацию
+          </div>
+        </div></div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Запуск проактивного сорсинга</div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">За 4–6 недель до старта вакансии — дать рекрутеру задачу на сорсинг</div>
+          <div class="task-hint">«Мы откроем эту роль в марте — начинай находить и коннектиться уже сейчас»<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Задание на сорсинг выдано минимум за 4 недели до официального старта<br>
+            · До дня старта вакансии есть минимум 5–7 предварительно проработанных профилей<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Рекрутер понимает зачем это делается и не воспринимает как «лишнюю работу»<br>
+            · Time-to-fill вакансий где был проактивный сорсинг — меньше чем без него
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Составить предварительный профиль кандидата ещё до официального брифинга</div>
+          <div class="task-hint">Гипотетический финальный файл по кандидату на основе предварительного разговора с менеджером<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Предварительный профиль составлен минимум за 2 недели до официального брифинга<br>
+            · Профиль содержит гипотетический must-have (3–5 пунктов) и стоп-факторы<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · На официальном брифинге 80%+ гипотез подтвердились — это означает — тимлид понимает бизнес<br>
+            · Профиль сокращает время брифинга так как большинство уже понятно
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Дать рекрутеру конкретный формат задания: не «посмотри», а «найди 15 профилей и сделай первую точку контакта»</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Задание содержит: количество профилей, каналы поиска, дедлайн и формат отчёта<br>
+            · Рекрутер отчитывается о выполнении в оговорённый срок<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Рекрутер знает что именно искать и не тратит время на уточнения<br>
+            · Качество найденных профилей соответствует предварительному профилю кандидата
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Научить рекрутеров формулировать честный месседж: «Сейчас позиция не открыта, но мы планируем — хочу познакомиться заранее»</div>
+          <div class="task-hint">Кандидаты ценят честность и запоминают такой разговор позитивно<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Все рекрутеры команды используют проактивное сообщение при сорсинге<br>
+            · Response rate на такие сообщения отслеживается и есть базовый бенчмарк<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Ни один рекрутер не вводит кандидата в заблуждение относительно статуса вакансии<br>
+            · Кандидаты реагируют позитивно — отвечают даже когда не ищут работу
+          </div>
+        </div></div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Поддержание тёплой базы кандидатов</div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Построить «тёплый список» — кандидаты, с которыми уже есть контакт, но вакансия ещё не открыта</div>
+          <div class="task-hint">В ATS или отдельном трекере: имя, профиль, дата контакта, статус интереса<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Тёплый список содержит минимум 15–20 профилей разных специализаций<br>
+            · Каждый профиль имеет: дату последнего контакта, уровень интереса, следующий шаг<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · При открытии новой вакансии есть минимум 3–5 кандидатов из тёплого списка которым можно написать сразу<br>
+            · Список живой — не создан один раз и не обновлялся
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Поддерживать контакт с тёплой базой раз в 4–6 недель</div>
+          <div class="task-hint">Поделиться полезным материалом, новостью о компании, пригласить на мероприятие<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Минимум 1 touchpoint с каждым кандидатом тёплого списка раз в 4–6 недель<br>
+            · Процент кандидатов, отвечающих на поддерживающий контакт ≥ 40%<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Контакт не выглядит как «спам» — он персональный и уместный<br>
+            · Кандидаты сами начинают писать когда готовы к изменениям
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Реактивировать «отказанных» кандидатов через 3–6 месяцев после отказа</div>
+          <div class="task-hint">«С того времени у нас появилась новая роль, которая может быть ближе к тебе»<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Минимум 1 раз в квартал просматривается база отказных кандидатов<br>
+            · Минимум 20% отказных получают реактивационное сообщение<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Реактивация происходит когда есть реальная подходящая вакансия, а не просто чтобы «напомнить о себе»<br>
+            · Хотя бы 1 закрытая вакансия в квартал — из реактивированного кандидата
+          </div>
+        </div></div>
+
+
+      </div>
+
+      <div class="checklist-group">
+        <div class="group-label">Контроль и обучение команды</div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">На weekly review спрашивать: «Какие вакансии открываются в следующем месяце — что уже сделано заранее?»</div>
+          <div class="task-hint">
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Вопросы про проактивный сорсинг есть в повестке каждого weekly review<br>
+            · Каждый рекрутер отчитывается о количестве «тёплых» контактов по будущим вакансиям<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Команда воспринимает проактивный сорсинг как норму, а не «дополнительную нагрузку»<br>
+            · Есть культура где рекрутеры сами предлагают кандидатов ещё до открытия вакансии
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Ввести метрику: количество «тёплых» кандидатов в базе на момент старта новой вакансии</div>
+          <div class="task-hint">Цель: хотя бы 5–7 предварительно проработанных профилей до дня официального открытия<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Метрика считается и отображается для каждой новой вакансии<br>
+            · Через 1 месяц после внедрения цель ≥ 5 тёплых профилей на старте достигается минимум для 50% вакансий<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Команда понимает связь между этой метрикой и скоростью закрытия<br>
+            · Метрика обсуждается на weekly review, а не только фиксируется
+          </div>
+        </div></div>
+
+        <div class="task-item" data-phase="proactive" onclick="toggle(this)"><div class="task-check"></div><div class="task-body">
+          <div class="task-text">Провести кейс-сессию: сравнить time-to-fill вакансии с подготовленным пулом vs без него</div>
+          <div class="task-hint">Покажи команде реальную разницу во времени — это лучший аргумент в пользу проактивного подхода<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Количественные показатели:</span><br>
+            · Сравнение проведено на реальных данных минимум 2 вакансии каждого типа<br>
+            · Разница в time-to-fill зафиксирована в цифрах и показана команде<br><br>
+            <span style="color:var(--text3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Качественные показатели:</span><br>
+            · Команда после сессии мотивирована делать проактивный сорсинг, а не вынуждена<br>
+            · Кейс-сессия становится регулярной практикой, а не разовым мероприятием
+          </div>
+        </div></div>
+      </div>
+
+      <div style="background:var(--surface2);border-radius:var(--radius);padding:14px 16px;margin-top:4px">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">Пример из практики</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">
+          <strong>Ситуация:</strong> CEO сообщил, что через 6 недель откроется позиция Head of Marketing.<br>
+          <strong>Реактивный подход:</strong> ждём официального старта → начинаем сорсить → находим кандидатов через 2 недели → закрываем за 8–10 недель.<br>
+          <strong>Проактивный подход:</strong> сразу после разговора с CEO → рекрутер получает задачу найти 20 профилей и написать 10 → за 6 недель уже есть 3–4 прогретых кандидата → вакансия закрывается за 3–4 недели после официального старта.<br>
+          <strong>Разница:</strong> экономия 4–6 недель и меньший стресс для команды.
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+var diagData=[
+  {t:"Проблема: верхушка воронки пустая",items:["Переписать описание вакансии: первый абзац — ценность для кандидата, вилка зарплаты обязательно","Расширить каналы: нишевые Telegram, Discord, LinkedIn нестандартный Boolean","Запустить реферальный запрос в команде — с конкретным описанием кого ищем","Построить список 20–30 пассивных профилей и написать вручную каждому","Проверить: не являются ли требования «unicorn» — если меньше 20% рынка соответствует, убрать"]},
+  {t:"Проблема: отсев после скрининга",items:["Проанализировать конкретный этап отсева — где именно падает конверсия","Проверить pitch вакансии — продаём ли роль, а не только спрашиваем","Проверить время реакции: если между скринингом и следующим шагом больше 5 дней — кандидат уходит","Собрать фидбек от тех, кто отказал: «почему решили не продолжать?»"]},
+  {t:"Проблема: менеджер отклоняет всех",items:["Остановить подачу CV — сначала исправить критерии, потом сорсить","Провести синк: показать данные — сколько рассмотрено, причины отказов","Подготовить карту рынка: сколько каких кандидатов есть и сколько они стоят","Предложить 3 сценария: снизить требования / повысить оффер / ждать дольше","Зафиксировать новые критерии письменно: must, nice-to-have, стоп-фактор"]},
+  {t:"Проблема: кандидат исчез или отказал после оффера",items:["Позвонить в тот же день — не писать, а звонить: выяснить реальную причину","Проверить: был ли контроффер от текущего работодателя","Немедленно вернуться к кандидату №2 из воронки — всегда иметь резерв","Сократить время от оффера до подписания: чем дольше — тем больше шансов передумать"]},
+  {t:"Проблема: вакансия открыта 60+ дней",items:["Сделать полный аудит: где застряло — верхушка, середина или оффер","Подготовить отчёт для руководства с данными и влиянием открытой позиции на бизнес","Провести переговоры об условиях: без изменения хотя бы одного параметра ничего не изменится","Рассмотреть временное решение: фрилансер пока идёт долгосрочный поиск","Оценить привлечение агентства или хедхантера"]}
+];
+
+function diag(idx, btn) {
+  document.querySelectorAll('.diag-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  var d = diagData[idx];
+  document.getElementById('diag-title').textContent = d.t;
+  document.getElementById('diag-items').innerHTML = d.items.map(i=>'<div class="answer-item">'+i+'</div>').join('');
+  document.getElementById('diag-ans').classList.add('show');
+}
+
+// Scoring
+var scores = {sl: new Array(8).fill(null), sc: new Array(8).fill(null)};
+function score(key, idx, val, btn) {
+  var group = btn.closest('.score-btns').querySelectorAll('.sbtn');
+  group.forEach(b=>b.classList.remove('s-yes','s-part','s-no'));
+  var cls = val===2?'s-yes':val===1?'s-part':'s-no';
+  btn.classList.add(cls);
+  scores[key][idx] = val;
+  calcScore(key);
+}
+function calcScore(key) {
+  var filled = scores[key].filter(v=>v!==null);
+  if (!filled.length) { setScore(key,'—','Заповни критерии',0,'#ccc'); return; }
+  var sum = filled.reduce((a,b)=>a+b,0);
+  var pct = Math.round(sum/filled.length/2*100);
+  var v,c;
+  if(pct>=75){v='Рекомендовать дальше';c='#1D9E75';}
+  else if(pct>=50){v='Обсудить с менеджером';c='#BA7517';}
+  else{v='Не соответствует требованиям';c='#A32D2D';}
+  setScore(key, pct+'%', v, pct, c);
+}
+function setScore(key, num, verdict, pct, color) {
+  document.getElementById(key+'-num').textContent = num;
+  document.getElementById(key+'-verdict').textContent = verdict;
+  var bar = document.getElementById(key+'-bar');
+  bar.style.width = pct+'%'; bar.style.background = color;
+}
+function resetScore(key) {
+  scores[key] = new Array(8).fill(null);
+  document.querySelectorAll('#sc-'+key.replace('s','').replace('l','line').replace('c','c')+'-rows .sbtn, #sc-'+(key==='sl'?'line':'c')+'-rows .sbtn').forEach(b=>b.classList.remove('s-yes','s-part','s-no'));
+  setScore(key,'—','Заповни критерии',0,'#ccc');
+}
+
+// Checklist with localStorage
+var checkState = {};
+var phaseTotals = {phase1:12,phase2:9,phase3:10,phase4:10,hv:16,proactive:15};
+
+function loadState() {
+  try { checkState = JSON.parse(localStorage.getItem('rt_checks')||'{}'); } catch(e) { checkState={}; }
+}
+function saveState() {
+  try { localStorage.setItem('rt_checks', JSON.stringify(checkState)); } catch(e) {}
+}
+
+function toggle(el) {
+  var key = el.dataset.phase + '_' + getIdx(el);
+  var isDone = checkState[key];
+  checkState[key] = !isDone;
+  saveState();
+  renderItem(el, !isDone);
+  updateProgress();
+}
+
+function getIdx(el) {
+  var parent = el.parentElement;
+  return Array.from(parent.querySelectorAll('.task-item')).indexOf(el);
+}
+
+function renderItem(el, done) {
+  el.classList.toggle('done', done);
+}
+
+function restoreChecks() {
+  document.querySelectorAll('.task-item').forEach(el => {
+    var phase = el.dataset.phase;
+    var idx = getIdx(el);
+    var key = phase + '_' + idx;
+    if (checkState[key]) el.classList.add('done');
+  });
+}
+
+function countPhase(phase) {
+  var items = document.querySelectorAll('.task-item[data-phase="'+phase+'"]');
+  var done = 0;
+  items.forEach((el,i) => { if(checkState[phase+'_'+i]) done++; });
+  return {done, total: items.length};
+}
+
+function updateProgress() {
+  var phases = ['phase1','phase2','phase3','phase4'];
+  var totalDone = 0, totalAll = 0;
+  phases.forEach(p => {
+    var {done, total} = countPhase(p);
+    totalDone += done; totalAll += total;
+    var pct = total ? Math.round(done/total*100) : 0;
+    var el = document.getElementById('np-'+p);
+    if(el) el.textContent = pct+'%';
+  });
+  // hv + proactive
+  var hv = countPhase('hv');
+  totalDone += hv.done; totalAll += hv.total;
+  var pr = countPhase('proactive');
+  totalDone += pr.done; totalAll += pr.total;
+  var gPct = totalAll ? Math.round(totalDone/totalAll*100) : 0;
+  document.getElementById('global-fill').style.width = gPct+'%';
+  document.getElementById('global-pct').textContent = gPct+'%';
+}
+
+// Navigation
+var current = 'phase1';
+function show(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  var sec = document.getElementById(id);
+  if(sec) sec.classList.add('active');
+  var nav = document.querySelector('[onclick="show(\''+id+'\')"]');
+  if(nav) nav.classList.add('active');
+  current = id;
+  if(window.innerWidth<=768) document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo(0,0);
+  return false;
+}
+
+function toggleMenu() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Init
+loadState();
+restoreChecks();
+updateProgress();
+</script>
+</body>
+</html>
